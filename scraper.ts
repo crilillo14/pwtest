@@ -1,6 +1,7 @@
 import { chromium , type Browser, type Page } from "./node_modules/@playwright/test"; 
-import { proxyConfig } from './config';
+import { getProxy } from './config';
 import * as fs from "fs"
+import { env } from "process";
 /* 
 
 This scraping logic is only for the U Miami alumni page, 
@@ -21,8 +22,17 @@ interface AlumniProfile {
 }
 
 export async function runLinkedinScrape(baseURL: string) {
+    // get proxy first from config
+
+    const proxyAddress : string = getProxy();
+
+
     const browser : Browser = await chromium.launch({
-      proxy: proxyConfig,
+      proxy: {
+        server: proxyAddress,
+        username: process.env.PROXY_USERNAME, 
+        password: process.env.PROXY_PASSWORD,
+      } , 
       headless: false  // set to true in production
     });
     const page : Page = await browser.newPage();
@@ -34,6 +44,7 @@ export async function runLinkedinScrape(baseURL: string) {
 
 
     try {
+
 
 
         await page.goto(baseURL); 
@@ -52,10 +63,7 @@ export async function runLinkedinScrape(baseURL: string) {
 
         scrapedData = scrapedData.concat(fetchedAlumni);
 
-        // TODO: if new alumni, insert into DB. import func from server/db/
-
-        
-        
+        // TODO: if new alumni, insert into DB. import func from server/db/        
         
         console.log(scrapedData)
     }
