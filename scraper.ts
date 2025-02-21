@@ -24,7 +24,7 @@ interface AlumniProfile {
 export async function runLinkedinScrape(baseURL: string) {
     // get proxy first from config
 
-    const proxyAddress : string = getProxy();
+    const proxyAddress : string = await getProxy();
 
 
     const browser : Browser = await chromium.launch({
@@ -33,7 +33,7 @@ export async function runLinkedinScrape(baseURL: string) {
         username: process.env.PROXY_USERNAME, 
         password: process.env.PROXY_PASSWORD,
       } , 
-      headless: false  // set to true in production
+      headless: true // set to true in production
     });
     const page : Page = await browser.newPage();
 
@@ -50,7 +50,8 @@ export async function runLinkedinScrape(baseURL: string) {
         await page.goto(baseURL); 
         await page.waitForSelector(SELECTOR) 
 
-    
+        // big boy eval : parsing page content
+        
         const fetchedAlumni : AlumniProfile[] = await page.$$eval( SELECTOR + suffix, 
             (elements) => elements.map( element => ({
                 name: element.querySelector<HTMLDivElement>("ember-view lt-line-clamp lt-line-clamp--single-line BEFuKteXeTCNsLeFZdKrWGvUcyRoKfnzlENEt-black")?.textContent?.trim() || "",

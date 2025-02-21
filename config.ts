@@ -1,5 +1,5 @@
 import * as fs from "fs"
-import path from "path";
+import * as path from "path";
 
 async function loadProxylist(filepath : string) : Promise<string> {
     try {
