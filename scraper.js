@@ -38,41 +38,37 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.runLinkedinScrape = runLinkedinScrape;
 var test_1 = require("./node_modules/@playwright/test");
-var config_1 = require("./config");
 function runLinkedinScrape(baseURL) {
     return __awaiter(this, void 0, void 0, function () {
-        var proxyAddress, browser, page, SELECTOR, suffix, scrapedData, fetchedAlumni, error_1;
+        var browser, page, SELECTOR, suffix, scrapedData, fetchedAlumni, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, (0, config_1.getProxy)()];
+                case 0: return [4 /*yield*/, test_1.chromium.launch({
+                        /* proxy: {
+                          server: proxyAddress,
+                          username: process.env.PROXY_USERNAME,
+                          password: process.env.PROXY_PASSWORD,
+                        } , */
+                        headless: true // set to true in production
+                    })];
                 case 1:
-                    proxyAddress = _a.sent();
-                    return [4 /*yield*/, test_1.chromium.launch({
-                            proxy: {
-                                server: proxyAddress,
-                                username: process.env.PROXY_USERNAME,
-                                password: process.env.PROXY_PASSWORD,
-                            },
-                            headless: true // set to true in production
-                        })];
-                case 2:
                     browser = _a.sent();
                     return [4 /*yield*/, browser.newPage()];
-                case 3:
+                case 2:
                     page = _a.sent();
                     SELECTOR = "grid grid__col--lg-8 block org-people-profile-card__profile-card-spacing";
                     suffix = ":nth-last-child(-n+12)";
                     scrapedData = [];
-                    _a.label = 4;
-                case 4:
-                    _a.trys.push([4, 8, 9, 11]);
+                    _a.label = 3;
+                case 3:
+                    _a.trys.push([3, 7, 8, 10]);
                     return [4 /*yield*/, page.goto(baseURL)];
-                case 5:
+                case 4:
                     _a.sent();
                     return [4 /*yield*/, page.waitForSelector(SELECTOR)
                         // big boy eval : parsing page content
                     ];
-                case 6:
+                case 5:
                     _a.sent();
                     return [4 /*yield*/, page.$$eval(SELECTOR + suffix, function (elements) { return elements.map(function (element) {
                             var _a, _b, _c;
@@ -81,22 +77,22 @@ function runLinkedinScrape(baseURL) {
                                 url: ((_c = element.querySelector("a.LoJdmTsykuKzNNXmKqlWKHuaZBApZAOCkc ")) === null || _c === void 0 ? void 0 : _c.href) || "",
                             });
                         }); })];
-                case 7:
+                case 6:
                     fetchedAlumni = _a.sent();
                     // insert into temporary array
                     scrapedData = scrapedData.concat(fetchedAlumni);
                     // TODO: if new alumni, insert into DB. import func from server/db/        
                     console.log(scrapedData);
-                    return [3 /*break*/, 11];
-                case 8:
+                    return [3 /*break*/, 10];
+                case 7:
                     error_1 = _a.sent();
                     console.error('Scraping failed: ', error_1);
-                    return [3 /*break*/, 11];
-                case 9: return [4 /*yield*/, browser.close()];
-                case 10:
+                    return [3 /*break*/, 10];
+                case 8: return [4 /*yield*/, browser.close()];
+                case 9:
                     _a.sent();
                     return [7 /*endfinally*/];
-                case 11: return [2 /*return*/];
+                case 10: return [2 /*return*/];
             }
         });
     });
